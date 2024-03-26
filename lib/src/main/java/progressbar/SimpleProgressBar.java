@@ -31,10 +31,19 @@ public class SimpleProgressBar implements ProgressBar{
     }
 
     //utility methods
+
+    /**
+     * Calculate the percentage of the progress
+     * based on the specified target.
+     */
     private void calculatePercentage(){
         percentage = ((double) target / progress) * 100;
     }
 
+    /**
+     * Creates the String representation of the state
+     * of this ProgressBar.
+     */
     private void createState(){
         StringBuilder builder = new StringBuilder("[");
         double remainder = percentage;
