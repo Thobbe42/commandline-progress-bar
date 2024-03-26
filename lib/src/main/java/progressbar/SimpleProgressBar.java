@@ -1,5 +1,8 @@
 package progressbar;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class SimpleProgressBar implements ProgressBar{
 
     private final int target;
@@ -12,6 +15,7 @@ public class SimpleProgressBar implements ProgressBar{
         this.percentagePerStep = percentagePerStep;
         progress = 0;
         percentage = 0.0;
+        createState();
     }
     @Override
     public void step() {
@@ -37,7 +41,10 @@ public class SimpleProgressBar implements ProgressBar{
      * based on the specified target.
      */
     private void calculatePercentage(){
-        percentage = ((double) target / progress) * 100;
+        DecimalFormat df = new DecimalFormat("####0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        double val = ((double) progress / target) * 100;
+        percentage = Double.parseDouble(df.format(val));
     }
 
     /**
@@ -45,7 +52,7 @@ public class SimpleProgressBar implements ProgressBar{
      * of this ProgressBar.
      */
     private void createState(){
-        StringBuilder builder = new StringBuilder("[");
+        StringBuilder builder = new StringBuilder("\r[");
         double remainder = percentage;
         int countOfSteps = 0;
         //set already completed progress visually
@@ -59,7 +66,7 @@ public class SimpleProgressBar implements ProgressBar{
         remainder = 100 - (countOfSteps * percentagePerStep);
         countOfSteps = Math.ceilDiv((int)remainder, percentagePerStep);
 
-        builder.append("..".repeat(Math.max(0, countOfSteps)))
+        builder.append(".".repeat(Math.max(0, countOfSteps)))
                 .append("] ")
                 .append(percentage)
                 .append("%");
