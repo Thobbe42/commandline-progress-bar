@@ -1,29 +1,85 @@
 package progressbar;
 
-public interface ProgressBar {
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
-    //TODO: configuration methods
+public abstract class ProgressBar {
 
+    private final int target;
+    private final int percentagePerStep;
+    private int progress;
+    private double percentage;
+    private String state;
 
+    public ProgressBar(final int target, final int percentagePerStep){
+        this.target = target;
+        this.percentagePerStep = percentagePerStep;
+        progress = 0;
+        percentage = 0.0;
+        createState();
+    }
+    public void step() {
+        step(1);
+    }
 
+    public void step(int steps) {
+        progress += steps;
+        calculatePercentage();
+        createState();
+    }
+
+    public void print() {
+        System.out.print(state);
+    }
+
+    //utility methods
 
     /**
-     * Increase the progress by one default step.
+     * Calculate the percentage of the progress
+     * based on the specified target.
      */
-    void step();
+    private void calculatePercentage(){
+        DecimalFormat df = new DecimalFormat("####0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+        double val = ((double) progress / target) * 100;
+        percentage = Double.parseDouble(df.format(val));
+    }
 
     /**
-     * Increase the progress by a specified amount
-     * of steps.
-     *
-     * @param steps The number of executed actions to
-     *              add to the progress.
+     * Creates the String representation of the state
+     * of this ProgressBar.
      */
-    void step(int steps);
+    private void createState(){
+        StringBuilder builder = new StringBuilder("\r[");
+        double remainder = percentage;
+        int countOfSteps = 0;
+        //set already completed progress visually
+        while (remainder >= percentagePerStep) {
+            builder.append("#");
+            remainder -= percentagePerStep;
+            countOfSteps++;
+        }
 
-    /**
-     * Print the state of this ProgressBar to
-     * System.out.
-     */
-    void print();
+        //set remaining progress visually
+        remainder = 100 - (countOfSteps * percentagePerStep);
+        countOfSteps = Math.ceilDiv((int)remainder, percentagePerStep);
+
+        builder.append(".".repeat(Math.max(0, countOfSteps)))
+                .append("] ")
+                .append(percentage)
+                .append("%");
+
+        state = builder.toString();
+    }
+
+    public static Builder builder(){
+        return new Builder();
+    }
+
+    public static class Builder{
+        
+        public ProgressBar create(){
+            return new SimpleProgressBar(100,5);
+        }
+    }
 }
