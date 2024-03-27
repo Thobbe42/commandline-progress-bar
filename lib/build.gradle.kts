@@ -10,6 +10,8 @@ plugins {
     `java-library`
 }
 
+version = "1.0.0"
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
@@ -32,4 +34,10 @@ java {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+tasks.withType<Jar>{
+    manifest{
+        archiveBaseName.set("progressbar")
+    }
 }
