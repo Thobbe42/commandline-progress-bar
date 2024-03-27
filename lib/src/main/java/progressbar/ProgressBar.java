@@ -11,13 +11,14 @@ public abstract class ProgressBar {
     private double percentage;
     private String state;
 
-    public ProgressBar(final int target, final int percentagePerStep){
+    public ProgressBar(final int target, final int percentagePerStep) {
         this.target = target;
         this.percentagePerStep = percentagePerStep;
         progress = 0;
         percentage = 0.0;
         createState();
     }
+
     public void step() {
         step(1);
     }
@@ -38,7 +39,7 @@ public abstract class ProgressBar {
      * Calculate the percentage of the progress
      * based on the specified target.
      */
-    private void calculatePercentage(){
+    private void calculatePercentage() {
         DecimalFormat df = new DecimalFormat("####0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
         double val = ((double) progress / target) * 100;
@@ -49,7 +50,7 @@ public abstract class ProgressBar {
      * Creates the String representation of the state
      * of this ProgressBar.
      */
-    private void createState(){
+    private void createState() {
         StringBuilder builder = new StringBuilder("\r[");
         double remainder = percentage;
         int countOfSteps = 0;
@@ -62,7 +63,7 @@ public abstract class ProgressBar {
 
         //set remaining progress visually
         remainder = 100 - (countOfSteps * percentagePerStep);
-        countOfSteps = Math.ceilDiv((int)remainder, percentagePerStep);
+        countOfSteps = Math.ceilDiv((int) remainder, percentagePerStep);
 
         builder.append(".".repeat(Math.max(0, countOfSteps)))
                 .append("] ")
@@ -72,14 +73,27 @@ public abstract class ProgressBar {
         state = builder.toString();
     }
 
-    public static Builder builder(){
+    public static Builder builder() {
         return new Builder();
     }
 
-    public static class Builder{
-        
-        public ProgressBar create(){
-            return new SimpleProgressBar(100,5);
+    public static class Builder {
+
+        private int target = 100;
+        private int stepSize = 5;
+
+        public Builder target(final int target) {
+            this.target = target;
+            return this;
+        }
+
+        public Builder stepSize(final int stepSize) {
+            this.stepSize = stepSize;
+            return this;
+        }
+
+        public ProgressBar create() {
+            return new SimpleProgressBar(target, stepSize);
         }
     }
 }
