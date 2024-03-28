@@ -10,6 +10,7 @@ public abstract class ProgressBar {
     private int progress;
     private double percentage;
     private String state;
+    private boolean started = false;
 
     public ProgressBar(final int target, final int percentagePerStep) {
         this.target = target;
@@ -19,21 +20,56 @@ public abstract class ProgressBar {
         createState();
     }
 
+    //INTERFACE METHODS
+
+    /**
+     * Progress the state of this ProgressBar by
+     * one event.
+     */
     public void step() {
-        step(1);
+        if (started) {
+            step(1);
+        }
     }
 
+    /**
+     * Progress the state of this ProgressBar by a defined
+     * amount of events.
+     *
+     * @param steps The amount of evens to add to the progress.
+     */
     public void step(int steps) {
-        progress += steps;
-        calculatePercentage();
-        createState();
+        if (started) {
+            progress += steps;
+            calculatePercentage();
+            createState();
+            print();
+            if (percentage == 100.0) {
+                started = false;
+            }
+        }
     }
 
-    public void print() {
+    /**
+     * Start the progressbar, by printing the initial state
+     * and enabling the control functions.
+     */
+    public void start() {
+        started = true;
+        print();
+    }
+
+
+    //UTILITY METHODS
+
+
+    /**
+     * Print the current state of the bar to
+     * System.out.
+     */
+    private void print() {
         System.out.print(state);
     }
-
-    //utility methods
 
     /**
      * Calculate the percentage of the progress
@@ -41,7 +77,6 @@ public abstract class ProgressBar {
      */
     private void calculatePercentage() {
         DecimalFormat df = new DecimalFormat("####0.00");
-        df.setRoundingMode(RoundingMode.HALF_UP);
         double val = ((double) progress / target) * 100;
         percentage = Double.parseDouble(df.format(val));
     }
@@ -73,6 +108,12 @@ public abstract class ProgressBar {
         state = builder.toString();
     }
 
+    /**
+     * Creates a builder object to construct and configure
+     * a ProgressBar.
+     *
+     * @return a new Builder object.
+     */
     public static Builder builder() {
         return new Builder();
     }
@@ -82,16 +123,38 @@ public abstract class ProgressBar {
         private int target = 100;
         private int stepSize = 5;
 
+        /**
+         * Set the target for the ProgressBar.
+         *
+         * @param target A numerical value describing the amount
+         *               of events considered as 100 percent.
+         * @return This builder with the target property set.
+         */
         public Builder target(final int target) {
             this.target = target;
             return this;
         }
 
+        /**
+         * Set the step size for the ProgressBar.
+         *
+         * @param stepSize A numerical value describing the size
+         *                 of one visual step, i.e. a stepSize of 5
+         *                 partitions the bar in 20 5% steps.
+         * @return This builder with the stepSize property set.
+         */
         public Builder stepSize(final int stepSize) {
             this.stepSize = stepSize;
             return this;
         }
 
+        /**
+         * Creates the ProgressBar object as configured by
+         * this builder.
+         *
+         * @return A ProgressBar object as configured by the
+         * properties of this builder.
+         */
         public ProgressBar create() {
             return new SimpleProgressBar(target, stepSize);
         }
