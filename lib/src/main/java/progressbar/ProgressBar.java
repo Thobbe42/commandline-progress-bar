@@ -1,6 +1,9 @@
 package progressbar;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public abstract class ProgressBar {
 
@@ -10,6 +13,8 @@ public abstract class ProgressBar {
     private double percentage;
     private String state;
     private boolean started = false;
+    private final ScheduledExecutorService scheduler =
+            Executors.newSingleThreadScheduledExecutor();
 
     public ProgressBar(final int target, final int percentagePerStep) {
         this.target = target;
@@ -45,6 +50,7 @@ public abstract class ProgressBar {
             print();
             if (percentage == 100.0) {
                 started = false;
+                scheduler.shutdown();
             }
         }
     }
@@ -55,7 +61,7 @@ public abstract class ProgressBar {
      */
     public void start() {
         started = true;
-        print();
+        scheduler.scheduleAtFixedRate(this::print, 0, 250, TimeUnit.MILLISECONDS);
     }
 
 
