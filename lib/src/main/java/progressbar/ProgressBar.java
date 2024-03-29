@@ -1,6 +1,5 @@
 package progressbar;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public abstract class ProgressBar {
@@ -121,7 +120,7 @@ public abstract class ProgressBar {
     public static class Builder {
 
         private int target = 100;
-        private int stepSize = 5;
+        private int percentageBlockSize = 5;
 
         /**
          * Set the target for the ProgressBar.
@@ -129,8 +128,12 @@ public abstract class ProgressBar {
          * @param target A numerical value describing the amount
          *               of events considered as 100 percent.
          * @return This builder with the target property set.
+         * @throws IllegalArgumentException if the actual parameter is less
+         *                                  than or equal to zero.
          */
-        public Builder target(final int target) {
+        public Builder target(final int target) throws IllegalArgumentException {
+            if (target <= 0)
+                throw new IllegalArgumentException("Target must be greater than zero but was " + target);
             this.target = target;
             return this;
         }
@@ -138,13 +141,19 @@ public abstract class ProgressBar {
         /**
          * Set the step size for the ProgressBar.
          *
-         * @param stepSize A numerical value describing the size
-         *                 of one visual step, i.e. a stepSize of 5
-         *                 partitions the bar in 20 5% steps.
-         * @return This builder with the stepSize property set.
+         * @param percentageBlockSize A numerical value describing the size
+         *                            of one visual step, i.e. a percentageBlockSize
+         *                            of 5 partitions the bar in 20 5% steps.
+         * @return This builder with the percentageBlockSize property set.
+         * @throws IllegalArgumentException if the actual parameter is less
+         *                                  than or equal to zero.
          */
-        public Builder stepSize(final int stepSize) {
-            this.stepSize = stepSize;
+        public Builder percentageBlockSize(final int percentageBlockSize) throws IllegalArgumentException {
+            if (percentageBlockSize <= 0)
+                throw new IllegalArgumentException(
+                        "PercentageBlockSize must be greater than zero but was " + percentageBlockSize
+                );
+            this.percentageBlockSize = percentageBlockSize;
             return this;
         }
 
@@ -156,7 +165,7 @@ public abstract class ProgressBar {
          * properties of this builder.
          */
         public ProgressBar create() {
-            return new SimpleProgressBar(target, stepSize);
+            return new SimpleProgressBar(target, percentageBlockSize);
         }
     }
 }
