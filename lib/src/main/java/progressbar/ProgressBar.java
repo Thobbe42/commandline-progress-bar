@@ -149,8 +149,10 @@ public abstract class ProgressBar {
          *                                  than or equal to zero.
          */
         public Builder percentageBlockSize(final int percentageBlockSize) throws IllegalArgumentException {
-            if (target <= 0)
-                throw new IllegalArgumentException("Target must be greater than zero but was " + target);
+            if (percentageBlockSize <= 0)
+                throw new IllegalArgumentException(
+                        "PercentageBlockSize must be greater than zero but was " + percentageBlockSize
+                );
             this.percentageBlockSize = percentageBlockSize;
             return this;
         }
