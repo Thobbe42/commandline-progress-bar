@@ -129,8 +129,12 @@ public abstract class ProgressBar {
          * @param target A numerical value describing the amount
          *               of events considered as 100 percent.
          * @return This builder with the target property set.
+         * @throws IllegalArgumentException if the actual parameter is less
+         *                                  than or equal to zero.
          */
-        public Builder target(final int target) {
+        public Builder target(final int target) throws IllegalArgumentException {
+            if (target <= 0)
+                throw new IllegalArgumentException("Target must be greater than zero but was " + target);
             this.target = target;
             return this;
         }
@@ -142,8 +146,12 @@ public abstract class ProgressBar {
          *                 of one visual step, i.e. a stepSize of 5
          *                 partitions the bar in 20 5% steps.
          * @return This builder with the stepSize property set.
+         * @throws IllegalArgumentException if the actual parameter is less
+         *                                  than or equal to zero.
          */
-        public Builder stepSize(final int stepSize) {
+        public Builder stepSize(final int stepSize) throws IllegalArgumentException {
+            if (target <= 0)
+                throw new IllegalArgumentException("Target must be greater than zero but was " + target);
             this.stepSize = stepSize;
             return this;
         }
