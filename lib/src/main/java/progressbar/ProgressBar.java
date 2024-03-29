@@ -39,6 +39,8 @@ public abstract class ProgressBar {
     /**
      * Progress the state of this ProgressBar by a defined
      * amount of events.
+     * Terminates the ExecutorService of this ProgressBar if
+     * 100% of the target is reached.
      *
      * @param steps The amount of evens to add to the progress.
      */
@@ -47,17 +49,18 @@ public abstract class ProgressBar {
             progress += steps;
             calculatePercentage();
             createState();
-            print();
             if (percentage == 100.0) {
                 started = false;
                 scheduler.shutdown();
+                //call final print to ensure that 100% progress is always presented
+                print();
             }
         }
     }
 
     /**
-     * Start the progressbar, by printing the initial state
-     * and enabling the control functions.
+     * Start the progressbar by enabling the control functions
+     * and starting the ScheduledExecutorService.
      */
     public void start() {
         started = true;
