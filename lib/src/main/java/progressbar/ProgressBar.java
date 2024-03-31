@@ -54,8 +54,10 @@ public abstract class ProgressBar {
      * and enabling the control functions.
      */
     public void start() {
-        started = true;
-        print();
+        if(!started) {
+            started = true;
+            print();
+        }
     }
 
 
