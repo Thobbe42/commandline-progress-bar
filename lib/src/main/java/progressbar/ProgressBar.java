@@ -54,8 +54,10 @@ public abstract class ProgressBar {
      * and enabling the control functions.
      */
     public void start() {
-        started = true;
-        print();
+        if(!started) {
+            started = true;
+            print();
+        }
     }
 
 
@@ -121,6 +123,7 @@ public abstract class ProgressBar {
 
         private int target = 100;
         private int percentageBlockSize = 5;
+        private boolean threadSafe = false;
 
         /**
          * Set the target for the ProgressBar.
@@ -157,6 +160,16 @@ public abstract class ProgressBar {
             return this;
         }
 
+        public Builder threadSafe(){
+            this.threadSafe = !threadSafe;
+            return this;
+        }
+
+        public Builder threadSafe(final boolean threadSafe){
+            this.threadSafe = threadSafe;
+            return this;
+        }
+
         /**
          * Creates the ProgressBar object as configured by
          * this builder.
@@ -165,6 +178,9 @@ public abstract class ProgressBar {
          * properties of this builder.
          */
         public ProgressBar create() {
+            if(threadSafe){
+                return new ThreadProgressBar(target, percentageBlockSize);
+            }
             return new SimpleProgressBar(target, percentageBlockSize);
         }
     }
